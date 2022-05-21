@@ -54,3 +54,7 @@ There are two different docker-compose files available to run the project in pro
 `docker-compose up -d`
 
 After building the docker image, you can remove everything from from the project directory except logs and data directories (unless you use named volumes in docker-compose file).
+
+## Using the API
+
+After running the app successfully, open http://localhost:8050/api-docs to see the API documentation.
