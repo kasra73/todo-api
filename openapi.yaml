@@ -83,18 +83,18 @@ paths:
       parameters:
       - name: status
         in: query
-        description: Item's status
+        description: Items with this status
         schema:
           type: string
       - name: toDueDate
         in: query
-        description: Item's status
+        description: Items with dueDate before this date
         schema:
           type: string
           format: date-time
       - name: fromDueDate
         in: query
-        description: Item's status
+        description: Items with dueDate after this date
         schema:
           type: string
           format: date-time
@@ -108,6 +108,7 @@ paths:
 
 # [POST] items
     post:
+      summary: Add New Item
       description: Add Item
       operationId: addItem
       tags:
@@ -155,7 +156,7 @@ paths:
     patch:
       tags:
       - items
-      summary: Update item fields by ID
+      summary: Update Item by ID
       parameters:
       - name: id
         in: path
@@ -174,6 +175,7 @@ paths:
                   type: string
                 dueDate:
                   type: string
+                  example: '2018-12-14T22:37:54.000Z'
       responses:
         200:
           description: 'OK'
@@ -235,9 +237,11 @@ components:
         status:
           type: integer
           description: Status of the task (in-progress or done)
+          example: 'in-progress'
         dueDate:
           type: string
           description: Due Date of the task
+          example: '2018-12-14T22:37:54.000Z'
 
   securitySchemes:
     BearerAuth:

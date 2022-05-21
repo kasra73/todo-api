@@ -8,19 +8,18 @@ class ItemService {
   // public items = ItemModel;
 
   public async findAllItem(userId: mongoose.Types.ObjectId, searchQuery: SearchItemDto): Promise<Item[]> {
-    const qData = plainToInstance(SearchItemDto, searchQuery);
     const query: any = {};
-    if (qData.fromDueDate !== undefined) {
-      query.dueDate = { $gte: qData.fromDueDate };
+    if (searchQuery.fromDueDate !== undefined) {
+      query.dueDate = { $gte: searchQuery.fromDueDate };
     }
-    if (qData.toDueDate !== undefined) {
+    if (searchQuery.toDueDate !== undefined) {
       if (query.dueDate === undefined) {
         query.dueDate = {};
       }
-      query.dueDate.$lte = qData.toDueDate;
+      query.dueDate.$lte = searchQuery.toDueDate;
     }
-    if (qData.status !== undefined) {
-      query.status = qData.status;
+    if (searchQuery.status !== undefined) {
+      query.status = searchQuery.status;
     }
 
     const items: Item[] = await ItemModel.find({ userId, ...query });
@@ -49,7 +48,6 @@ class ItemService {
       { ...data },
       { returnDocument: 'after' },
     );
-    console.log(updateItemById);
     if (!updateItemById) throw new HttpException(404, 'Item does not exist');
 
     return updateItemById;
@@ -57,6 +55,7 @@ class ItemService {
 
   public async deleteItem(itemId: string, userId: mongoose.Types.ObjectId): Promise<boolean> {
     const deleteItemById = await ItemModel.deleteOne({ _id: new mongoose.Types.ObjectId(itemId), userId });
+    console.log(deleteItemById);
     if (deleteItemById.deletedCount === 0) throw new HttpException(404, 'Item does not exist');
     return true;
   }

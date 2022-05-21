@@ -1,5 +1,5 @@
 # Common build stage
-FROM node:14.14.0-alpine3.12 as common-build-stage
+FROM node:16.14.2-alpine as common-build-stage
 
 COPY . ./app
 
@@ -21,4 +21,6 @@ FROM common-build-stage as production-build-stage
 
 ENV NODE_ENV production
 
-CMD ["npm", "run", "start"]
+RUN npm run build:tsc
+
+CMD ["npm", "run", "start:prod"]

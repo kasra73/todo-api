@@ -13,8 +13,7 @@ export class CreateItemDto {
   @IsIn(['in-progress', 'done'])
   public status: ItemStatus = 'in-progress';
 
-  @IsDate()
-  @Type(() => Date)
+  @IsDateString()
   public dueDate: Date;
 }
 

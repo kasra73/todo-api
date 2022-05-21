@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { CreateItemDto, SearchItemDto, UpdateItemDto } from '@dtos/items.dto';
 import ItemService from '@services/items.service';
 import { Item } from '@models/items.model';
+import { plainToInstance } from 'class-transformer';
 
 class ItemsController {
   public itemService = new ItemService();
@@ -9,7 +10,7 @@ class ItemsController {
   public getItems = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userId = (req as any).user._id;
-      const searchQuery: SearchItemDto = req.query;
+      const searchQuery = plainToInstance(SearchItemDto, req.query);
       const findAllItemsData: Item[] = await this.itemService.findAllItem(userId, searchQuery);
 
       res.status(200).json({ data: findAllItemsData, message: 'findAll' });
@@ -59,7 +60,7 @@ class ItemsController {
     try {
       const userId = (req as any).user._id;
       const itemId: string = req.params.id;
-      await this.itemService.deleteItem(itemId, req.con, userId);
+      await this.itemService.deleteItem(itemId, userId);
 
       res.status(200).json({ data: null, message: 'Item deleted successfully' });
     } catch (error) {
