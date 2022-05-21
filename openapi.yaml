@@ -1,0 +1,245 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Todo API
+  license:
+    name: MIT
+servers:
+  - url: http://localhost:3000
+
+tags:
+- name: auth
+  description: Authentication API
+- name: items
+  description: Todo API
+
+paths:
+# [POST] register
+  /register:
+    post:
+      description: Register user
+      operationId: register
+      tags:
+      - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        201:
+          description: 'Created'
+        400:
+          description: 'Bad Request'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+
+# [POST] login
+  /login:
+    post:
+      description: User login
+      operationId: login
+      tags:
+      - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        201:
+          description: 'Created'
+        400:
+          description: 'Bad Request'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+
+# [GET] items
+  /items:
+    get:
+      tags:
+      - items
+      summary: Find All Items
+      parameters:
+      - name: status
+        in: query
+        description: Item's status
+        schema:
+          type: string
+      - name: toDueDate
+        in: query
+        description: Item's status
+        schema:
+          type: string
+          format: date-time
+      - name: fromDueDate
+        in: query
+        description: Item's status
+        schema:
+          type: string
+          format: date-time
+      responses:
+        200:
+          description: 'OK'
+        500:
+          description: 'Server Error'
+      security:
+        - BearerAuth: []
+
+# [POST] items
+    post:
+      description: Add Item
+      operationId: addItem
+      tags:
+      - items
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Item'
+      responses:
+        201:
+          description: 'Created'
+        400:
+          description: 'Bad Request'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+      security:
+        - BearerAuth: []
+
+  /items/{id}:
+# [GET] item
+    get:
+      tags:
+      - items
+      summary: Get item by ID
+      parameters:
+      - name: id
+        in: path
+        description: Id of the item to get
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: 'OK'
+        500:
+          description: 'Server Error'
+      security:
+        - BearerAuth: []
+
+# [PATCH] items
+    patch:
+      tags:
+      - items
+      summary: Update item fields by ID
+      parameters:
+      - name: id
+        in: path
+        description: Id of the item to update
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                dueDate:
+                  type: string
+      responses:
+        200:
+          description: 'OK'
+        400:
+          description: 'Invalid input'
+        500:
+          description: 'Server Error'
+      security:
+        - BearerAuth: []
+
+# [DELETE] items
+    delete:
+      tags:
+      - items
+      summary: Delete item by ID
+      parameters:
+      - name: id
+        in: path
+        description: Id of the item to delete
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: 'OK'
+        500:
+          description: 'Server Error'
+      security:
+        - BearerAuth: []
+
+
+components:
+  schemas:
+    User:
+      type: object
+      required:
+          - email
+          - password
+      properties:
+        email:
+          type: string
+          description: user Email
+        password:
+          type: string
+          description: user Password
+    Item:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title of the task
+          example: Writing tests
+        description:
+          type: string
+          description: Description of the task
+        # userId:
+        #   type: integer
+        #   description: User Id of the task owner
+        status:
+          type: integer
+          description: Status of the task (in-progress or done)
+        dueDate:
+          type: string
+          description: Due Date of the task
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
